@@ -1,0 +1,32 @@
+#!/usr/bin/env python3
+import sys, time, glob, os
+
+FPS = 30
+
+here = os.path.dirname(os.path.realpath(__file__))
+candidates = [sys.argv[1]] if len(sys.argv) > 1 else [
+    os.path.join(here, "frames"),
+    "/usr/local/share/kysnow/frames",
+]
+frame_dir = next((d for d in candidates if os.path.isdir(d)), None)
+if not frame_dir:
+    sys.exit("kysnow: frames folder not found")
+
+files = sorted(glob.glob(os.path.join(frame_dir, "*.txt")))
+if not files:
+    sys.exit("kysnow: no .txt frames in " + frame_dir)
+frames = [open(f).read() for f in files]
+
+sys.stdout.write("\x1b[?25l\x1b[2J")  # hide cursor, clear screen
+try:
+    start = time.perf_counter()
+    for i, frame in enumerate(frames):
+        sys.stdout.write("\x1b[H" + frame)
+        sys.stdout.flush()
+        delay = start + (i + 1) / FPS - time.perf_counter()
+        if delay > 0:
+            time.sleep(delay)
+except KeyboardInterrupt:
+    pass
+finally:
+    sys.stdout.write("\x1b[?25h\x1b[0m\n")  # restore cursor and colors
