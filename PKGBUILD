@@ -1,6 +1,6 @@
 pkgname=kysnow
 pkgver=1.0
-pkgrel=5
+pkgrel=7
 pkgdesc="Plays Low Tier God in your terminal, Made by Tonsuke"
 arch=('any')
 license=('unknown')
