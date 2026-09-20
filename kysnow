@@ -1,5 +1,7 @@
 #!/bin/bash
 here="$(dirname "$(readlink -f "$0")")"
-video="$here/video.mp4"
-[ -f "$video" ] || video="/usr/local/share/kysnow/video.mp4"
-exec mpv --vo=tct --really-quiet "$video" "$@"
+for dir in "$here" /usr/share/kysnow /usr/local/share/kysnow; do
+  [ -f "$dir/video.mp4" ] && video="$dir/video.mp4" && break
+done
+[ -n "$video" ] || { echo "kysnow: video.mp4 not found" >&2; exit 1; }
+exec mpv --vo=tct --really-quiet --loop=inf "$video" "$@"
